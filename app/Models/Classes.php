@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Log;
 
 class Classes extends Model
 {
@@ -61,23 +62,33 @@ class Classes extends Model
         return $class->curriculum;
     }
 
-    public static function updateCurriculum(array $data)
+    public static function updateCurriculum(array $data): ?Classes
     {
-        $class = self::find($data['class_id']);
+        try {
+            $class = self::find($data['class_id']);
 
-        foreach ($data['lectures'] as $lecture) {
-            // maybe updateOrCreate will be better
-            $lecture = Lecture::find($lecture['id']);
+            foreach ($data['lectures'] as $lecture) {
+                // maybe updateOrCreate will be better
+                $lecture = Lecture::find($lecture['id']);
 
-            if ($lecture) {
-                $lecture->update($lecture);
-            } else {
-                $lecture = new Lecture($lecture);
-                $class->lectures()->save($lecture);
+                if ($lecture) {
+                    $lecture->update($lecture);
+                } else {
+                    $lecture = new Lecture($lecture);
+                    $class->lectures()->save($lecture);
+                }
             }
-        }
 
-        return $class->lectures;
+            $class->order = $data['order'];
+
+            $class->save();
+
+            return $class;
+        } catch (\Exception $e) {
+            Log::error('Ошибка при создании/обновлении плана', (array) $e->getMessage());
+
+            return null;
+        }
     }
 
     public static function deleteClasses(Classes $class): bool

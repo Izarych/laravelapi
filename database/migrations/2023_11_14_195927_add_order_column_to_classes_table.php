@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('curriculums', function (Blueprint $table) {
+        Schema::table('classes', function (Blueprint $table) {
             $table->integer('order')->default(1);
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('curriculums', function (Blueprint $table) {
+        Schema::table('classes', function (Blueprint $table) {
             $table->dropColumn('order');
         });
     }
