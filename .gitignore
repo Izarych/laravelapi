@@ -15,6 +15,11 @@ public/hot
 public_html/storage
 public_html/hot
 
+.editorconfig
+*.json
+*.xml
+tests
+*.js
 storage/*.key
 .env
 Homestead.yaml
